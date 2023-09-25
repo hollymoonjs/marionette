@@ -1,0 +1,21 @@
+{
+    "name": "@tvili999/marionette",
+    "version": "0.0.8",
+    "description": "",
+    "main": "index.js",
+    "bin": {
+        "marionette": "index.js"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@tvili999/js-container": "^3.0.0",
+        "ansi-colors": "^4.1.3",
+        "chokidar": "^3.5.3",
+        "tree-kill": "^1.2.2"
+    }
+}

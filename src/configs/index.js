@@ -1,0 +1,5 @@
+const { configure } = require("@tvili999/js-container")
+
+module.exports = configure(
+    require("./configs"),
+)
