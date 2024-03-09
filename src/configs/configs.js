@@ -1,15 +1,25 @@
-const { inject, init, configure } = require("@tvili999/js-container")
-const path = require("path")
-const fs = require("fs")
-const process = require("process")
+const { inject, init, configure } = require("@tvili999/js-container");
+const path = require("path");
+const fs = require("fs");
+const process = require("process");
 
-const CONFIG_NAME = "marionette.config.js"
+const CONFIG_NAMES = ["marionette.config.js", "marionette.config.cjs"];
+
+function getConfigPath(dir) {
+    for (const configName of CONFIG_NAMES) {
+        const configPath = path.join(dir, configName);
+        if (fs.existsSync(configPath)) {
+            return configPath;
+        }
+    }
+    return null;
+}
 
 /**
  * @param {String} dir
  */
 function discoverConfig(dir) {
-    const configPath = path.join(dir, CONFIG_NAME);
+    const configPath = getConfigPath(dir);
     if (fs.existsSync(configPath)) {
         return [dir];
     }
@@ -40,13 +50,12 @@ function discoverConfig(dir) {
  * @param {string} projectDir
  */
 function readConfig(projectDir) {
-    const configPath = path.join(projectDir, CONFIG_NAME)
+    const configPath = getConfigPath(projectDir);
     const mod = require(configPath);
     delete require.cache[require.resolve(configPath)];
 
     return mod;
 }
-
 
 module.exports = configure(
     inject("configs", async () => {
@@ -65,4 +74,4 @@ module.exports = configure(
             await config?.init?.();
         }
     })
-)
+);

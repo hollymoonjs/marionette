@@ -1,16 +1,26 @@
-const { inject } = require("@tvili999/js-container")
-const path = require("path")
-const fs = require("fs")
-const process = require("process")
+const { inject } = require("@tvili999/js-container");
+const path = require("path");
+const fs = require("fs");
+const process = require("process");
 
-const CONFIG_NAME = "marionette.project.js"
+const CONFIG_NAMES = ["marionette.project.js", "marionette.project.cjs"];
+
+function getConfigPath(dir) {
+    for (const configName of CONFIG_NAMES) {
+        const configPath = path.join(dir, configName);
+        if (fs.existsSync(configPath)) {
+            return configPath;
+        }
+    }
+    return null;
+}
 
 /**
  * @param {String} dir
  */
 function discoverProjects(dir) {
-    const configPath = path.join(dir, CONFIG_NAME);
-    if (fs.existsSync(configPath)) {
+    const configPath = getConfigPath(dir);
+    if (configPath) {
         return [dir];
     }
 
@@ -40,7 +50,7 @@ function discoverProjects(dir) {
  * @param {string} projectDir
  */
 function readConfig(projectDir) {
-    const configPath = path.join(projectDir, CONFIG_NAME)
+    const configPath = getConfigPath(projectDir);
     const mod = require(configPath);
     delete require.cache[require.resolve(configPath)];
 
@@ -53,23 +63,23 @@ function readConfig(projectDir) {
         try {
             const packageJsonPath = path.join(projectDir, "package.json");
             if (fs.existsSync(packageJsonPath)) {
-                const packageJsonRaw = fs.readFileSync(packageJsonPath).toString()
-                const packageJson = JSON.parse(packageJsonRaw)
+                const packageJsonRaw = fs
+                    .readFileSync(packageJsonPath)
+                    .toString();
+                const packageJson = JSON.parse(packageJsonRaw);
 
                 config.name = packageJson.name;
             }
-        }
-        catch { }
+        } catch {}
     }
 
     if (!config.name) {
-        console.error(`Missing name for project ${projectDir}.`)
-        process.exit(1)
+        console.error(`Missing name for project ${projectDir}.`);
+        process.exit(1);
     }
 
     return config;
 }
-
 
 module.exports = inject("projects", async () => {
     let projects = {};
@@ -85,5 +95,5 @@ module.exports = inject("projects", async () => {
         projects[projectConfig.name] = projectConfig;
     }
 
-    return projects
-})
+    return projects;
+});
