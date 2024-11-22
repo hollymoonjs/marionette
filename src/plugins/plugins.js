@@ -1,9 +1,9 @@
-const { init } = require("@tvili999/js-container")
+const { init } = require("@hollymoon/container")
 
 module.exports = init(
     async (container) => {
         const { get } = container;
-        const configs =  /** @type {any} */ (await get("configs"));
+        const configs =  /** @type {any} */ get("configs");
 
         for (const config of configs) {
             for (const plugin of config.plugins || []) {

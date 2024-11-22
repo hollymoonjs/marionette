@@ -1,4 +1,4 @@
-const { init } = require("@tvili999/js-container");
+const { init } = require("@hollymoon/container");
 
 module.exports = init(async ({ get }) => {
     const tasks = /** @type {any} */ (await get("tasks"));

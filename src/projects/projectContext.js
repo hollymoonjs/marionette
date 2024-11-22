@@ -1,8 +1,8 @@
-const { init } = require("@tvili999/js-container");
+const { init } = require("@hollymoon/container");
 
 module.exports = init(async ({ get }) => {
-    const contextBuilder = /** @type {any} */ (await get("context"));
-    const projects = await get("projects");
+    const contextBuilder = /** @type {any} */ get("context");
+    const projects = get("projects");
 
     contextBuilder.addBuilder("projects", () => projects)
 })

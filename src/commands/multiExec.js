@@ -1,9 +1,9 @@
-const { init } = require("@tvili999/js-container");
+const { init } = require("@hollymoon/container");
 
 module.exports = init(async ({ get }) => {
-    const commands = /** @type {any} */ (await get("commands"))
-    const context = /** @type {any} */ (await get("context"))
-    const tasks = /** @type {any} */ (await get("tasks"))
+    const commands = /** @type {any} */ get("commands")
+    const context = /** @type {any} */ get("context")
+    const tasks = /** @type {any} */ get("tasks")
 
     context.addBuilder("args", () => commands.args);
 

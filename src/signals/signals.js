@@ -1,6 +1,6 @@
-const { inject } = require("@tvili999/js-container")
+const { provide } = require("@hollymoon/container")
 
-module.exports = inject("signals", () => {
+module.exports = provide("signals", () => {
     const signals = {};
     const sniffers = [];
 

@@ -1,4 +1,4 @@
-const { inject } = require("@tvili999/js-container");
+const { provide } = require("@hollymoon/container");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
@@ -70,7 +70,7 @@ function readConfig(projectDir) {
 
                 config.name = packageJson.name;
             }
-        } catch {}
+        } catch { }
     }
 
     if (!config.name) {
@@ -81,7 +81,7 @@ function readConfig(projectDir) {
     return config;
 }
 
-module.exports = inject("projects", async () => {
+module.exports = provide("projects", async () => {
     let projects = {};
     const configChecks = [];
 

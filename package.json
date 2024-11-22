@@ -1,6 +1,6 @@
 {
     "name": "@tvili999/marionette",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "description": "",
     "main": "index.js",
     "bin": {
@@ -13,7 +13,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@tvili999/js-container": "^3.1.3",
+        "@hollymoon/container": "^0.2.0",
         "ansi-colors": "^4.1.3",
         "chokidar": "^3.5.3",
         "tree-kill": "^1.2.2"

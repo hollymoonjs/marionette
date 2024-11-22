@@ -1,11 +1,11 @@
-const { inject, configure, init } = require("@tvili999/js-container")
+const { provide, defineConfig } = require("@hollymoon/container")
 const process = require("process")
 
-module.exports = configure(
-    inject("tasks", async ({ get }) => {
-        const projects = await get("projects");
-        const contextBuilder = /** @type {any} */ (await get("context"));
-        const signals = /** @type {any} */ (await get("signals"));
+module.exports = defineConfig(
+    provide("tasks", async ({ inject }) => {
+        const projects = await inject("projects");
+        const contextBuilder = /** @type {any} */ (await inject("context"));
+        const signals = /** @type {any} */ (await inject("signals"));
 
         const taskBuilders = {};
 

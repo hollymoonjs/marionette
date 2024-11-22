@@ -1,4 +1,4 @@
-const { inject, init, configure } = require("@tvili999/js-container");
+const { provide, init, defineConfig } = require("@hollymoon/container");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
@@ -57,8 +57,8 @@ function readConfig(projectDir) {
     return mod;
 }
 
-module.exports = configure(
-    inject("configs", async () => {
+module.exports = defineConfig(
+    provide("configs", async () => {
         const configs = [];
         for (const configDir of discoverConfig(process.cwd())) {
             const config = readConfig(configDir);
@@ -68,7 +68,7 @@ module.exports = configure(
         return configs;
     }),
     init(async ({ get }) => {
-        const configs = /** @type {any} */ (await get("configs"));
+        const configs = /** @type {any} */ get("configs");
 
         for (const config of configs) {
             await config?.init?.();

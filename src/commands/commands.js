@@ -1,8 +1,8 @@
-const { inject, configure, run } = require("@tvili999/js-container");
+const { provide, defineConfig, run } = require("@hollymoon/container");
 const process = require("process");
 
-module.exports = configure(
-    inject("commands", async () => {
+module.exports = defineConfig(
+    provide("commands", async () => {
         const commands = {};
 
         const api = {
@@ -25,10 +25,9 @@ module.exports = configure(
 
         return api;
     }),
-    run(async (container) => {
-        const { get } = container;
-        const signals = /** @type {any} */ (await get("signals"));
-        const commands = /** @type {any} */ (await get("commands"));
+    run(async ({ get }) => {
+        const signals = /** @type {any} */ get("signals");
+        const commands = /** @type {any} */ get("commands");
 
         await signals.fire("command:beforeRun", process.argv[2])
 

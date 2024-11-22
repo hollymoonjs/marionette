@@ -1,6 +1,6 @@
-const { configure } = require("@tvili999/js-container")
+const { defineConfig } = require("@hollymoon/container")
 
-module.exports = configure(
+module.exports = defineConfig(
     require("./projects"),
     require("./projectContext")
 )

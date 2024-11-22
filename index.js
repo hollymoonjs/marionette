@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-const { default: container } = require("@tvili999/js-container");
+const { createContainer } = require("@hollymoon/container");
 
-container(require("./src")).catch(console.error);
+createContainer(require("./src")).catch(console.error);
