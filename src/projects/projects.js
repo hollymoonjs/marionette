@@ -51,8 +51,12 @@ function discoverProjects(dir) {
  */
 function readConfig(projectDir) {
     const configPath = getConfigPath(projectDir);
-    const mod = require(configPath);
+    let mod = require(configPath);
     delete require.cache[require.resolve(configPath)];
+
+    if (mod.__esModule) {
+        mod = mod.default;
+    }
 
     const config = {
         ...mod,
