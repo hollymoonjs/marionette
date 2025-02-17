@@ -10,6 +10,17 @@ module.exports = defineConfig(
         const taskBuilders = {};
 
         const api = {
+            list() {
+                const result = [];
+
+                for (const [projectName, project] of Object.entries(projects)) {
+                    for (const [taskName, task] of Object.entries(project.tasks)) {
+                        result.push({ project: projectName, task: taskName })
+                    }
+                }
+
+                return result;
+            },
             /**
              * @param {string} project
              * @param {string} task
