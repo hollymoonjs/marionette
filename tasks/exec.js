@@ -31,6 +31,12 @@ module.exports =
         dependencies ||= [];
 
         const taskStates = {};
+        for (const dep of dependencies) {
+            const task = await context.tasks.getTask(dep.project, dep.task);
+            taskStates[`${dep.project}:${dep.task}`] = task.state;
+        }
+
+
         context.signals.on("task:state", (task) => {
             if (
                 !dependencies.find(
