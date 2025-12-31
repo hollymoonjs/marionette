@@ -2,6 +2,7 @@ const { provide, init, defineConfig } = require("@hollymoon/container");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
+const { createIgnore, shouldIgnore } = require("../ignore/ignore");
 
 const CONFIG_NAMES = ["marionette.config.js", "marionette.config.cjs"];
 
@@ -17,8 +18,10 @@ function getConfigPath(dir) {
 
 /**
  * @param {String} dir
+ * @param {import("ignore").Ignore} ig
+ * @param {string} baseDir
  */
-function discoverConfig(dir) {
+function discoverConfig(dir, ig, baseDir) {
     const configPath = getConfigPath(dir);
     if (fs.existsSync(configPath)) {
         return [dir];
@@ -40,7 +43,11 @@ function discoverConfig(dir) {
             continue;
         }
 
-        const subResult = discoverConfig(childPath);
+        if (shouldIgnore(ig, baseDir, childPath)) {
+            continue;
+        }
+
+        const subResult = discoverConfig(childPath, ig, baseDir);
         result.push(...subResult);
     }
     return result;
@@ -59,16 +66,27 @@ function readConfig(projectDir) {
 
 module.exports = defineConfig(
     provide("configs", async () => {
+        const baseDir = process.cwd();
+        const ig = createIgnore(baseDir);
+
         const configs = [];
-        for (const configDir of discoverConfig(process.cwd())) {
+        for (const configDir of discoverConfig(baseDir, ig, baseDir)) {
             const config = readConfig(configDir);
             configs.push(config);
         }
 
-        return configs;
+        // Collect custom excludes from all configs
+        const customExcludes = configs.flatMap(c => c.exclude || []);
+
+        // Add custom excludes to the ignore instance
+        if (customExcludes.length > 0) {
+            ig.add(customExcludes);
+        }
+
+        return { configs, ig, baseDir };
     }),
     init(async ({ get }) => {
-        const configs = /** @type {any} */ get("configs");
+        const { configs } = /** @type {any} */ get("configs");
 
         for (const config of configs) {
             await config?.init?.();

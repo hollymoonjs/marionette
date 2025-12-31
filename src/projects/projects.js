@@ -2,6 +2,7 @@ const { provide } = require("@hollymoon/container");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
+const { shouldIgnore } = require("../ignore/ignore");
 
 const CONFIG_NAMES = ["marionette.project.js", "marionette.project.cjs"];
 
@@ -17,8 +18,10 @@ function getConfigPath(dir) {
 
 /**
  * @param {String} dir
+ * @param {import("ignore").Ignore} ig
+ * @param {string} baseDir
  */
-function discoverProjects(dir) {
+function discoverProjects(dir, ig, baseDir) {
     const configPath = getConfigPath(dir);
     if (configPath) {
         return [dir];
@@ -40,7 +43,11 @@ function discoverProjects(dir) {
             continue;
         }
 
-        const subResult = discoverProjects(childPath);
+        if (shouldIgnore(ig, baseDir, childPath)) {
+            continue;
+        }
+
+        const subResult = discoverProjects(childPath, ig, baseDir);
         result.push(...subResult);
     }
     return result;
@@ -85,11 +92,13 @@ function readConfig(projectDir) {
     return config;
 }
 
-module.exports = provide("projects", async () => {
+module.exports = provide("projects", async ({ inject }) => {
+    const { ig, baseDir } = /** @type {any} */ (await inject("configs"));
+
     let projects = {};
     const configChecks = [];
 
-    for (const projectDir of discoverProjects(process.cwd())) {
+    for (const projectDir of discoverProjects(baseDir, ig, baseDir)) {
         const projectConfig = readConfig(projectDir);
 
         for (const checker of configChecks) {
