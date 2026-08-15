@@ -11,10 +11,16 @@ API a third-party plugin would.
 
 ## Layout
 
-| path                   | package                 | what it is                                |
-| ---------------------- | ----------------------- | ----------------------------------------- |
-| `packages/marionette`  | `@hollymoon/marionette` | the core: config, plugin manager, CLI     |
-| `examples/basic_usage` | private                 | workspace package that runs the built CLI |
+| path                     | package                    | what it is                                |
+| ------------------------ | -------------------------- | ----------------------------------------- |
+| `packages/marionette`    | `@hollymoon/marionette`    | the core: config, plugin manager, CLI     |
+| `packages/marionette-ui` | `@hollymoon/marionette-ui` | web UI plugin, express server plus React  |
+| `examples/basic_usage`   | private                    | workspace package that runs the built CLI |
+
+Plugins are packages that depend on the core through its published API, with
+`@hollymoon/marionette` as a **peer** dependency so that one install only ever
+holds one copy of it. `marionette-ui` is a first party plugin, but nothing about
+how it is wired is unavailable to a third party one.
 
 Start with [`packages/marionette/README.md`](packages/marionette/README.md) for
 what marionette does and how plugins work.
@@ -35,7 +41,13 @@ pnpm check        # lint + format check, then each package's own check
 
 Linting and formatting are configured once at the root and cover every package.
 Building, testing and typechecking belong to the packages, so `pnpm -r` fans
-them out; run them inside a package directory to work on just that one.
+them out in dependency order; run them inside a package directory to work on
+just that one.
+
+Plugins resolve marionette through its package exports, so the core has to be
+built before anything downstream can typecheck, lint or test against it. `pnpm
+check` builds first for that reason, and on a fresh clone `pnpm build` comes
+before any of the individual commands.
 
 The project is on TypeScript 6, the last release with a programmatic JS API.
 TypeScript 7 is the native (Go) compiler and drops that API, which

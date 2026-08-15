@@ -18,11 +18,11 @@ Put a `marionette.config.ts` in your project root:
 
 ```ts
 import { defineConfig } from "@hollymoon/marionette";
-import { ui } from "@hollymoon/marionette/ui";
+import { ui } from "@hollymoon/marionette-ui";
 
 export default defineConfig({
     name: "my-project",
-    plugins: [ui()],
+    plugins: [ui({ port: 5000 })],
 });
 ```
 
@@ -34,7 +34,7 @@ Node >= 22.18.
 
 ```sh
 npx marionette
-# [marionette:ui] enabled
+# [marionette:ui] listening on http://127.0.0.1:5000
 ```
 
 Programmatically, the config is explicit and nothing is discovered for you:
@@ -102,10 +102,10 @@ The manager keys plugins by identity, so `myPlugin()` called twice produces two
 distinct plugins that mount independently. Hold on to the value you passed to
 `enable()` if you want to disable it later.
 
-### Bundled plugins
+### First party plugins
 
-- `@hollymoon/marionette/ui` — a placeholder that logs when it is enabled and
-  disabled. Real terminal UI comes later.
+- [`@hollymoon/marionette-ui`](../marionette-ui) — a web UI. It is a package of
+  its own and depends on this one exactly the way a third party plugin would.
 
 ## Development
 

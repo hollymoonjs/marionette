@@ -14,7 +14,7 @@
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "check": "pnpm lint && pnpm format:check && pnpm -r --if-present check"
+        "check": "pnpm build && pnpm lint && pnpm format:check && pnpm -r --if-present check"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

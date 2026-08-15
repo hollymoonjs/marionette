@@ -1,7 +1,7 @@
 {
-    "name": "@hollymoon/marionette",
+    "name": "@hollymoon/marionette-ui",
     "version": "0.0.14",
-    "description": "Monorepo task orchestration framework",
+    "description": "Web UI plugin for marionette",
     "author": "Takács Vilmos <tvili999@gmail.com>",
     "license": "MIT",
     "type": "module",
@@ -22,9 +22,6 @@
         },
         "./package.json": "./package.json"
     },
-    "bin": {
-        "marionette": "./dist/cli.mjs"
-    },
     "files": [
         "dist"
     ],
@@ -32,26 +29,39 @@
         "node": ">=22.18.0"
     },
     "scripts": {
-        "build": "tsdown",
+        "build": "tsdown && pnpm build:client",
+        "build:client": "vite build --config src/client/vite.config.ts",
         "dev": "tsdown --watch",
+        "dev:client": "vite --config src/client/vite.config.ts",
         "test": "vitest run",
         "test:watch": "vitest",
-        "typecheck": "tsc --noEmit",
+        "typecheck": "tsc --noEmit && tsc --noEmit -p src/client",
         "publint": "publint",
         "attw": "attw --pack .",
         "check": "pnpm typecheck && pnpm test && pnpm build && pnpm publint && pnpm attw",
         "prepack": "pnpm build"
     },
+    "peerDependencies": {
+        "@hollymoon/marionette": "workspace:^"
+    },
     "dependencies": {
-        "@hollymoon/common": "^0.3.2",
-        "@hollymoon/container": "^0.3.3"
+        "@hollymoon/container": "^0.3.3",
+        "express": "^5.2.1"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.5",
+        "@hollymoon/marionette": "workspace:*",
+        "@types/express": "^5.0.6",
         "@types/node": "^24.0.0",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
+        "@vitejs/plugin-react": "^6.0.5",
         "publint": "^0.3.23",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
         "tsdown": "^0.22.14",
         "typescript": "^6.0.3",
+        "vite": "^8.2.1",
         "vitest": "^4.1.10"
     }
 }

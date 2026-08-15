@@ -38,6 +38,10 @@ export class PluginManager {
         await this.disableAll();
     }
 
+    get enabled(): readonly MarionettePlugin[] {
+        return [...this.#containers.keys()];
+    }
+
     isEnabled(plugin: MarionettePlugin): boolean {
         return this.#containers.has(plugin);
     }
