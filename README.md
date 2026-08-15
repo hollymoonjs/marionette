@@ -1,122 +1,23 @@
-# @hollymoon/marionette
+# marionette
 
 Monorepo task orchestration framework. Its job is to build a dependency graph of
 tasks and manage them with signals and states — builds, tests, linting, type
 checks and watch-mode dev servers.
 
 The guiding philosophy is **no magic**: everything is explicit, and every
-capability beyond the core graph comes from a plugin.
+capability beyond the core graph comes from a plugin. This repository is a pnpm
+workspace so that plugins are packages of their own, consuming the same public
+API a third-party plugin would.
 
-> Status: early scaffold. `marionette()` builds a
-> [`@hollymoon/container`](https://www.npmjs.com/package/@hollymoon/container)
-> container holding the config and enables the configured plugins. Projects and
-> tasks come next.
+## Layout
 
-## Configuration
+| path                   | package                 | what it is                                |
+| ---------------------- | ----------------------- | ----------------------------------------- |
+| `packages/marionette`  | `@hollymoon/marionette` | the core: config, plugin manager, CLI     |
+| `examples/basic_usage` | private                 | workspace package that runs the built CLI |
 
-Put a `marionette.config.ts` in your project root:
-
-```ts
-import { defineConfig } from "@hollymoon/marionette";
-import { ui } from "@hollymoon/marionette/ui";
-
-export default defineConfig({
-    name: "my-project",
-    plugins: [ui()],
-});
-```
-
-The CLI walks up from the working directory until it finds one of
-`marionette.config.ts`, `.js`, `.mjs` or `.cjs` — in that order — and passes its
-default export to `marionette()`. It fails if there is none. `.ts` configs are
-loaded through Node's native type stripping, which is why the package requires
-Node >= 22.18.
-
-```sh
-npx marionette
-# [marionette:ui] enabled
-```
-
-Programmatically, the config is explicit and nothing is discovered for you:
-
-```ts
-import { configKey, marionette } from "@hollymoon/marionette";
-
-const container = await marionette({ name: "my-project" });
-container.get(configKey); // { name: "my-project" }
-await container.destroy();
-```
-
-## Plugins
-
-A plugin is a bag of hollymoon components. `createPlugin()` only groups them —
-it has no behaviour of its own, it exists so plugin authors do not have to know
-how the manager mounts them:
-
-```ts
-import { provide, run } from "@hollymoon/container";
-import { createPlugin } from "@hollymoon/marionette";
-
-export function myPlugin() {
-    return createPlugin(
-        provide(myKey, () => new MyThing()),
-        run((container) => {
-            container.get(myKey).start();
-        }),
-    );
-}
-```
-
-Every enabled plugin gets its **own container**, parented to the marionette
-container. So a plugin can inject anything marionette provides — the config, the
-plugin manager, whatever core modules land later — while its own components stay
-private to it, and disabling it tears down exactly what it built.
-
-`PluginManager` is an `@Injectable()` class, so it is keyed by the class itself:
-
-```ts
-const plugins = container.get(PluginManager);
-
-await plugins.enable(myPlugin()); // builds the plugin container
-plugins.isEnabled(plugin); // true
-await plugins.disable(plugin); // destroys it
-await plugins.disableAll();
-```
-
-It injects the config and enables everything in `plugins` from its own `@Run()`
-method, and picks up the container to parent them to from its `@Init()` method.
-Outside a marionette container you hand it both yourself:
-
-```ts
-const plugins = new PluginManager({ plugins: [myPlugin()] });
-plugins.init(someContainer);
-await plugins.enableConfigured();
-```
-
-`enable()` and `disable()` are idempotent: enabling an already enabled plugin is
-a no-op, and so is disabling one that is not enabled. Plugins listed in the
-config are enabled while the marionette container starts, and every plugin still
-enabled is disabled when that container is destroyed.
-
-The manager keys plugins by identity, so `myPlugin()` called twice produces two
-distinct plugins that mount independently. Hold on to the value you passed to
-`enable()` if you want to disable it later.
-
-### Bundled plugins
-
-- `@hollymoon/marionette/ui` — a placeholder that logs when it is enabled and
-  disabled. Real terminal UI comes later.
-
-## Examples
-
-`examples/` holds pnpm workspace packages that depend on the root package via
-`workspace:*`. Build the root package first, then run the CLI from an example:
-
-```sh
-pnpm build
-pnpm --dir examples/basic_usage exec marionette
-# [marionette:ui] enabled
-```
+Start with [`packages/marionette/README.md`](packages/marionette/README.md) for
+what marionette does and how plugins work.
 
 ## Development
 
@@ -124,13 +25,17 @@ Requires Node >= 22.18 and pnpm.
 
 ```sh
 pnpm install
-pnpm build        # tsdown, dual ESM + CJS with types
-pnpm test         # vitest (pnpm test:watch to keep it running)
-pnpm typecheck    # tsc
-pnpm lint         # eslint, type-checked rules
-pnpm format       # prettier
-pnpm check        # everything above + publint + attw
+pnpm build        # every package, in dependency order
+pnpm test         # every package
+pnpm typecheck    # every package
+pnpm lint         # eslint over the workspace, type-checked rules
+pnpm format       # prettier over the workspace
+pnpm check        # lint + format check, then each package's own check
 ```
+
+Linting and formatting are configured once at the root and cover every package.
+Building, testing and typechecking belong to the packages, so `pnpm -r` fans
+them out; run them inside a package directory to work on just that one.
 
 The project is on TypeScript 6, the last release with a programmatic JS API.
 TypeScript 7 is the native (Go) compiler and drops that API, which

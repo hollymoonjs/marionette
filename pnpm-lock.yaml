@@ -7,17 +7,7 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@hollymoon/common':
-        specifier: ^0.3.2
-        version: 0.3.5
-      '@hollymoon/container':
-        specifier: ^0.3.3
-        version: 0.3.3(@hollymoon/common@0.3.5)
     devDependencies:
-      '@arethetypeswrong/cli':
-        specifier: ^0.18.5
-        version: 0.18.5
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.8.1)
@@ -33,6 +23,34 @@ importers:
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+      typescript-eslint:
+        specifier: ^8.67.0
+        version: 8.67.0(eslint@10.8.1)(typescript@6.0.3)
+
+  examples/basic_usage:
+    dependencies:
+      '@hollymoon/marionette':
+        specifier: workspace:*
+        version: link:../../packages/marionette
+
+  packages/marionette:
+    dependencies:
+      '@hollymoon/common':
+        specifier: ^0.3.2
+        version: 0.3.5
+      '@hollymoon/container':
+        specifier: ^0.3.3
+        version: 0.3.3(@hollymoon/common@0.3.5)
+    devDependencies:
+      '@arethetypeswrong/cli':
+        specifier: ^0.18.5
+        version: 0.18.5
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.3
       publint:
         specifier: ^0.3.23
         version: 0.3.23
@@ -42,18 +60,9 @@ importers:
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
-      typescript-eslint:
-        specifier: ^8.67.0
-        version: 8.67.0(eslint@10.8.1)(typescript@6.0.3)
       vitest:
         specifier: ^4.1.10
         version: 4.1.10(@types/node@24.13.3)(vite@8.2.1(@types/node@24.13.3))
-
-  examples/basic_usage:
-    dependencies:
-      '@hollymoon/marionette':
-        specifier: workspace:*
-        version: link:../..
 
 packages:
 
