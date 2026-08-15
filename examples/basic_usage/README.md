@@ -1,8 +1,8 @@
 # basic_usage
 
 The smallest possible marionette project: it depends on `@hollymoon/marionette`
-through the workspace, defines a `marionette.config.ts` and runs the CLI, which
-prints the loaded config.
+through the workspace, defines a `marionette.config.ts` that enables the `ui`
+plugin, and runs the CLI.
 
 Build the root package first, since the example runs the built `dist/cli.mjs`:
 
@@ -14,7 +14,7 @@ Then, from this directory:
 
 ```sh
 pnpm exec marionette
-# { name: 'basic_usage' }
+# [marionette:ui] enabled
 ```
 
 `pnpm start` does the same thing.

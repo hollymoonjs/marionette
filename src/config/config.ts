@@ -4,8 +4,11 @@ import { pathToFileURL } from "node:url";
 
 import type { MarkerComponentKey } from "@hollymoon/container";
 
+import type { MarionettePlugin } from "../pluginManager/plugin.js";
+
 export interface MarionetteConfig {
     name?: string;
+    plugins?: MarionettePlugin[];
 }
 
 export function defineConfig(config: MarionetteConfig): MarionetteConfig {
