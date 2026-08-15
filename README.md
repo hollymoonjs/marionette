@@ -9,21 +9,39 @@ capability beyond the core graph comes from a plugin.
 
 > Status: early scaffold. `marionette()` builds a
 > [`@hollymoon/container`](https://www.npmjs.com/package/@hollymoon/container)
-> container that prints a greeting. Tasks, config and plugins come next.
+> container holding the config, which it prints. Projects, tasks and plugins
+> come next.
 
-## Usage
+## Configuration
+
+Put a `marionette.config.ts` in your project root:
+
+```ts
+import { defineConfig } from "@hollymoon/marionette";
+
+export default defineConfig({
+    name: "my-project",
+});
+```
+
+The CLI walks up from the working directory until it finds one of
+`marionette.config.ts`, `.js`, `.mjs` or `.cjs` — in that order — and passes its
+default export to `marionette()`. It fails if there is none. `.ts` configs are
+loaded through Node's native type stripping, which is why the package requires
+Node >= 22.18.
 
 ```sh
 npx marionette
-# Hello, World!
+# { name: 'my-project' }
 ```
 
-Programmatically:
+Programmatically, the config is explicit and nothing is discovered for you:
 
 ```ts
-import { marionette } from "@hollymoon/marionette";
+import { configKey, marionette } from "@hollymoon/marionette";
 
-const container = await marionette();
+const container = await marionette({ name: "my-project" });
+container.get(configKey); // { name: "my-project" }
 await container.destroy();
 ```
 
@@ -35,12 +53,12 @@ await container.destroy();
 ```sh
 pnpm build
 pnpm --dir examples/basic_usage exec marionette
-# Hello, World!
+# { name: 'basic_usage' }
 ```
 
 ## Development
 
-Requires Node >= 20 and pnpm.
+Requires Node >= 22.18 and pnpm.
 
 ```sh
 pnpm install

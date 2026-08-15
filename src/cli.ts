@@ -3,6 +3,7 @@ import { constants } from "node:os";
 
 import type { ReadyContainer } from "@hollymoon/container";
 
+import { findConfigFile, loadConfig } from "./config/config.js";
 import { marionette } from "./index.js";
 
 const SHUTDOWN_SIGNALS = ["SIGINT", "SIGTERM"] as const;
@@ -33,7 +34,15 @@ function destroyOnSignal(container: ReadyContainer): void {
 }
 
 async function main(): Promise<void> {
-    const container = await marionette();
+    const cwd = process.cwd();
+    const file = findConfigFile(cwd);
+    if (!file) {
+        throw new Error(
+            `No marionette config found in "${cwd}" or any parent directory`,
+        );
+    }
+
+    const container = await marionette(await loadConfig(file));
     destroyOnSignal(container);
 }
 
