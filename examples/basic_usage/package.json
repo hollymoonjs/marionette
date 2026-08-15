@@ -1,0 +1,12 @@
+{
+    "name": "marionette-example-basic-usage",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "marionette"
+    },
+    "dependencies": {
+        "@hollymoon/marionette": "workspace:*"
+    }
+}
